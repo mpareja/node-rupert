@@ -1,0 +1,20 @@
+{
+  "name": "rupert",
+  "version": "0.0.1-alpha",
+  "engines": {
+    "node": ">= 0.8.x"
+  },
+  "bin": {
+    "rupert": "./index.js"
+  },
+  "lib": "lib",
+  "dependencies": {
+    "async": "~0.1"
+  },
+  "devDependencies": {
+    "glob": "~3.1",
+    "jslint": "~0.1",
+    "semver": "~1.1",
+    "paprika": "~0.5.2-alpha"
+  }
+}
