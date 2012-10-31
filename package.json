@@ -15,6 +15,7 @@
     "glob": "~3.1",
     "jslint": "~0.1",
     "semver": "~1.1",
-    "paprika": "~0.5.2-alpha"
+    "paprika": "~0.5.2-alpha",
+    "mocha": "~1.6.0"
   }
 }
