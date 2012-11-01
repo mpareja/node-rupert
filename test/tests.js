@@ -1,5 +1,6 @@
 var rupert = require('../');
 var should = require('should');
+var expect = require('chai').expect;
 var he = it;
 describe('rupert', function () {
   he('executes a single task', function (done) {
@@ -26,13 +27,15 @@ describe('rupert', function () {
     });
   });
 
-  he('fails early if you do not tell him how to execute a task', function (done) {
-    rupert({}, { task1: [], task2: [] }, function (err) {
-      if (!err) { throw new Error('Expected rupert to throw!'); }
-      err.message.should.equal('No implementation provided for task(s): task1, task2');
-      done();
-    });
+  he('error on missing task', function () {
+    expect(function () {
+      rupert({}, { task1: [], task2: [] });
+    }).throws('No implementation provided for task(s): task1, task2');
   });
 
-  he('fails early if you do not tell him how to execute a task dependency');
+  he('error on missing dependency', function () {
+    expect(function () {
+      rupert({ task1: function (cb) { cb(null); } }, { task1: ['task2'] });
+    }).throws('No implementation provided for task(s): task2');
+  });
 });
