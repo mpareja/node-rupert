@@ -8,7 +8,7 @@ Rupert needs to know how to perform each task, how tasks are related and what ta
 
 ### Defining tasks and execution plan separately
 
-Separating _how_ a task is performed from _what_ tasks to perform makes reasoning about the process as a whole a lot easier. Rupert appreciates the simplicity that comes from having a list of tasks and their dependencies fit on a single screen. He doesn't take insult to the fact that your task library will never `require` him.
+Separating _how_ a task is performed from _what_ tasks to perform makes reasoning about the process as a whole a lot easier. Rupert appreciates the simplicity that comes from having a list of tasks and their dependencies fit on a single screen. He doesn't take insult to the fact that your task implementations will never `require` him.
 
 rupert(tasks, plan, callback)
 
