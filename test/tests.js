@@ -27,6 +27,20 @@ describe('rupert', function () {
     });
   });
 
+  he('executes dependant tasks', function (done) {
+    var root = false, leaf = false;
+    var tasks = {
+      root: function (cb) { root = true; cb(null); },
+      leaf: function (cb) { leaf = true; cb(null); }
+    };
+    rupert(tasks, { root: ['leaf'] }, function (err) {
+      if (err) { throw err; }
+      root.should.equal(true);
+      leaf.should.equal(true);
+      done();
+    });
+  });
+
   he('error on missing task', function () {
     expect(function () {
       rupert({}, { task1: [], task2: [] });

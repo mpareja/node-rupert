@@ -27,9 +27,7 @@ task('lint', function () {
       '--minusminus',
       '--'
     ],
-    files = glob.sync('./lib/*.js');
-
-  files.push('Jakefile.js');
+    files = ['Jakefile.js', 'index.js', 'test/tests.js'];
 
   execute('node', args.concat(files), '*** JSLint passed. ***', '!!! JSLint FAILED. !!!');
 }, { async: true });
