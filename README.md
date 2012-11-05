@@ -17,25 +17,17 @@ First, create an object or a class instance with methods for each task.
 		var tasks = {
 			clean: function (cb) { console.log('Cleaning.'); },
 			updateX: function (cb) { console.log('Updating x.'); },
-			updateY: function (cb) { console.log('Updating y.'); }
+			updateY: function (cb) { console.log('Updating y.'); },
+			updateZ: function (cb) { console.log('Updating z.'); }
 		};
 
 Next, create an object listing all of the tasks you want Rupert to execute. For each task, specify the task name as the key and an array of other task names that must first be completed as the value.
 
 		var plan = {
-			applyBackCompatibleDbChanges: [],
-			useTransDbForReporting: [],
-
-			stopSystemJobs: ['applyBackCompatibleDbChanges'],
-			deploySystemJobs: ['stopSystemJobs'],
-
-			updateLmsLanguageStrings: ['stopSystemJobs'],
-			applyNewDbChanges', ['updateLmsLanguageStrings'],
-			deployReports', ['applyNewDbChanges'],
-
-			applyReplicationChanges', ['applyNewDbChanges'],
-			applyReportingDbChanges', ['applyReplicationChanges'],
-			useReportingDbForReporting', ['applyReportingDbChanges']
+			clean: [],
+			updateX: ['clean'],
+			updateY: ['clean'],
+			updateZ: ['updateX', 'updateY']
 		};
 
 Finally, put it all in Rupert's capable hands and he'll let you know when he's done.
