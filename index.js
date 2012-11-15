@@ -1,8 +1,15 @@
-var async = require('async');
+var async = require('async'),
+  events = require('events');
+
 module.exports = function (taskImplementations, planNames, callback) {
   throwIfMissingTasks();
+  var emitter = new events.EventEmitter();
 
-  async.auto(generateExecutionPlan(), callback);
+  process.nextTick(function () {
+    async.auto(generateExecutionPlan(), callback);
+  });
+  
+  return emitter;
 
   function throwIfMissingTasks() {
     var alltaskNames = getAllNamedTasks();
@@ -43,9 +50,22 @@ module.exports = function (taskImplementations, planNames, callback) {
       }
 
       function execute(cb) {
-        taskImplementations[name](cb);
+        performTask(taskImplementations, name, emitter, cb);
       }
     }
     return p;
   }
 };
+
+function performTask(tasks, name, emitter, cb) {
+  try {
+    tasks[name](cb);
+  } catch (e) {
+    if (emitter.listeners('error').length > 0) {
+      // don't require all users to listen for error event
+      // they may only care about final result through callback
+      emitter.emit('error', e);
+    }
+    cb(e);
+  }
+}
