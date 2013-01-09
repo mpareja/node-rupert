@@ -59,13 +59,24 @@ module.exports = function (taskImplementations, planNames, callback) {
 
 function performTask(tasks, name, emitter, cb) {
   try {
-    tasks[name](cb);
+    tasks[name](function (err) {
+      if (err) {
+        safeEmitError(emitter, err);
+        cb(err);
+      } else {
+        cb(null);
+      }
+    });
   } catch (e) {
-    if (emitter.listeners('error').length > 0) {
-      // don't require all users to listen for error event
-      // they may only care about final result through callback
-      emitter.emit('error', e);
-    }
+    safeEmitError(emitter, e);
     cb(e);
+  }
+}
+
+function safeEmitError(emitter, err) {
+  if (emitter.listeners('error').length > 0) {
+    // don't require all users to listen for error event
+    // they may only care about final result through callback
+    emitter.emit('error', err);
   }
 }
