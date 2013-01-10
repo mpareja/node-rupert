@@ -5,9 +5,7 @@ module.exports = function (taskImplementations, planNames, callback) {
   throwIfMissingTasks();
   var emitter = new events.EventEmitter();
 
-  process.nextTick(function () {
-    async.auto(generateExecutionPlan(), callback);
-  });
+  async.auto(generateExecutionPlan(), callback);
   
   return emitter;
 
@@ -59,17 +57,31 @@ module.exports = function (taskImplementations, planNames, callback) {
 
 function performTask(tasks, name, emitter, cb) {
   try {
+    // if task completes immediately, execute callback on next tick for consistency
+    var invoked = false;
     tasks[name](function (err) {
-      if (err) {
-        safeEmitError(emitter, err);
-        cb(err);
+      if (invoked) {
+        taskDone(err);
       } else {
-        cb(null);
+        process.nextTick(function () {
+          taskDone(err);
+        });
       }
     });
+    invoked = true;
   } catch (e) {
-    safeEmitError(emitter, e);
-    cb(e);
+    process.nextTick(function () {
+        taskDone(e);
+    });
+  }
+
+  function taskDone(err) {
+    if (err) {
+      safeEmitError(emitter, err);
+      cb(err);
+    } else {
+      cb(null);
+    }
   }
 }
 

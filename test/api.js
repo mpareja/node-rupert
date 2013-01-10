@@ -52,4 +52,17 @@ describe('rupert', function () {
       rupert({ task1: function (cb) { cb(null); } }, { task1: ['task2'] });
     }).throws('No implementation provided for task(s): task2');
   });
+
+  he('ensures tasks complete on separate event loop tick', function (done) {
+    var tickHappened = false;
+    process.nextTick(function () {
+      tickHappened = true;
+    });
+
+    var tasks = { task: function (cb) { cb(null); } };
+    rupert(tasks, { task: [] }, function () {
+      expect(tickHappened).is.true;
+      done();
+    });
+  });
 });
