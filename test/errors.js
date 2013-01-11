@@ -19,21 +19,22 @@ describe('error handling', function () {
   });
 
   function testErrorReported(tasks, done) {
+    var callbackCalled = false;
     var errorCalled = false; // ensures error raised before completion callback
     var r = rupert(tasks, {'task': ['failtask']}, function (err) {
       expect(err).not.null;
       expect(err.message).equals('bogus');
+      expect(callbackCalled).is.false;
       expect(errorCalled).is.true;
+      callbackCalled = true;
       done();
     });
     r.on('error', function (err) {
       expect(err).not.null;
       expect(err.message).equals('bogus');
+      expect(callbackCalled).is.false;
       expect(errorCalled).is.false;
       errorCalled = true;
     });
   }
-
-  it('emit "error" event for errors in callback');
 });
-

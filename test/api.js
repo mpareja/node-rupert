@@ -53,16 +53,27 @@ describe('rupert', function () {
     }).throws('No implementation provided for task(s): task2');
   });
 
-  he('ensures tasks complete on separate event loop tick', function (done) {
+  he('executes tasks on a later tick', function (done) {
+    var taskDone = false;
+    var tasks = { task: function (cb) { taskDone = true; cb(null); } };
+    rupert(tasks, { task: [] });
+    expect(taskDone).is.false;
+    done();
+  });
+
+  he('ensures callback and events are not raised until future tick to allow listeners to be attached', function (done) {
     var tickHappened = false;
     process.nextTick(function () {
       tickHappened = true;
     });
 
-    var tasks = { task: function (cb) { cb(null); } };
-    rupert(tasks, { task: [] }, function () {
+    var tasks = { task: function (cb) { cb(new Error('enable checking error event')); } };
+    var r = rupert(tasks, { task: [] }, function () {
       expect(tickHappened).is.true;
       done();
+    });
+    r.on('error', function () {
+      expect(tickHappened).is.true;
     });
   });
 });

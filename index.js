@@ -5,7 +5,10 @@ module.exports = function (taskImplementations, planNames, callback) {
   throwIfMissingTasks();
   var emitter = new events.EventEmitter();
 
-  async.auto(generateExecutionPlan(), callback);
+  var plan = generateExecutionPlan();
+  process.nextTick(function () {
+    async.auto(plan, callback);
+  });
   
   return emitter;
 
