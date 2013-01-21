@@ -1,4 +1,4 @@
-# Rupert - pain-free async task runner with logging
+# Rupert - robust, event-emitting parallel task execution engine with logging support
 
 Hand Rupert a set of tasks including how they depend on each other and he'll take care of parallelizing them where possible. Rupert will stream task output to the console for your immediate viewing pleasure. He'll also stream each task's output to a separate log file so you can view it in isolation.
 
