@@ -33,6 +33,14 @@ describe('coordinator', function a8281d7ec1de53a22da675a7ed5374a8f138aa5d() {
     expect(r.next()).equals('first');
   });
 
+  it('knows if all tasks are complete', function () {
+    var r = Coordinator({'first': []});
+    expect(r.allDone()).is.false;
+    r.start('first');
+    r.complete('first');
+    expect(r.allDone()).is.true;
+  });
+
   it('prevents completing task before it is started', function () {
     var r = Coordinator({'first': []});
     expect(function () {
