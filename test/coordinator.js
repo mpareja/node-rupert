@@ -54,4 +54,13 @@ describe('coordinator', function a8281d7ec1de53a22da675a7ed5374a8f138aa5d() {
       r.start('first');
     }).throws('Unable to start "first" because it is waiting for one or more tasks.');
   });
+
+  it('prevents completing task after it has failed', function () {
+    var r = Coordinator({'first': []});
+    expect(function () {
+      r.start('first');
+      r.fail('first');
+      r.complete('first');
+    }).throws('Unable to complete "first" because it already failed.');
+  });
 });
