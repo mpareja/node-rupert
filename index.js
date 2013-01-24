@@ -1,52 +1,28 @@
-var async = require('async'),
-  events = require('events'),
-  generateExecutionPlan = require('./lib/plan_builder');
+var createController = require('./lib/controller');
 
 module.exports = function (taskImplementations, planNames, callback) {
-  var emitter = new events.EventEmitter();
-  var plan = generateExecutionPlan(taskImplementations, planNames, performTask, callback);
-  process.nextTick(function () {
-    async.auto(plan, callback);
-  });
-  
-  return emitter;
+  throwIfMissingTasks();
 
-  function performTask(name, cb) {
-    try {
-      // if task completes immediately, execute callback on next tick for consistency
-      var invoked = false;
-      taskImplementations[name](function (err) {
-        if (invoked) {
-          taskDone(err);
-        } else {
-          process.nextTick(function () {
-            taskDone(err);
-          });
-        }
-      });
-      invoked = true;
-    } catch (e) {
-      process.nextTick(function () {
-          taskDone(e);
-      });
-    }
+  var c = createController(taskImplementations, planNames, callback || function () {});
+  c.start();
+  return c.emitter;
 
-    function taskDone(err) {
-      if (err) {
-        safeEmitError(emitter, err);
-        cb(err);
-      } else {
-        cb(null);
-      }
+  function throwIfMissingTasks() {
+    var alltaskNames = getAllNamedTasks();
+    var missingTaskNames = alltaskNames.filter(function (name) { return typeof taskImplementations[name] !== 'function'; });
+    if (missingTaskNames.length > 0) {
+      throw new Error('No implementation provided for task(s): ' + missingTaskNames.join(', '));
     }
+  }
+
+  // NOTE: may return duplicates, we don't care above...
+  function getAllNamedTasks() {
+    var planTaskNames = Object.keys(planNames);
+    var alltaskNames = [].concat(planTaskNames); // clone it
+    planTaskNames.forEach(function (name) {
+      alltaskNames = alltaskNames.concat(planNames[name]);
+    });
+    return alltaskNames;
   }
 };
-
-function safeEmitError(emitter, err) {
-  if (emitter.listeners('error').length > 0) {
-    // don't require all users to listen for error event
-    // they may only care about final result through callback
-    emitter.emit('error', err);
-  }
-}
 
