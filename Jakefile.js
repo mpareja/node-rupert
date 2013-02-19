@@ -27,7 +27,29 @@ task('lint', function () {
       '--minusminus',
       '--'
     ],
-    files = ['Jakefile.js', 'index.js', 'test/tests.js'];
+    files = ['Jakefile.js', 'index.js'].concat(glob.sync('./lib/*'));
+
+  execute('node', args.concat(files), '*** JSLint passed. ***', '!!! JSLint FAILED. !!!');
+}, { async: true });
+
+desc('Run JSLint on tests');
+task('lint_tests', function () {
+  var args = [
+      path.join('node_modules', 'jslint', 'bin', 'jslint.js'),
+      '--devel',
+      '--node',
+      '--vars',
+      '--maxerr=100',
+      '--indent=2',
+      '--sloppy=true', // don't require "use strict" everywhere
+      '--nomen=true', // don't give warnings for __dirname
+      '--undef',
+      '--plusplus',
+      '--stupid', // enable Sync methods
+      '--minusminus',
+      '--'
+    ],
+    files = glob.sync('./test/*');
 
   execute('node', args.concat(files), '*** JSLint passed. ***', '!!! JSLint FAILED. !!!');
 }, { async: true });

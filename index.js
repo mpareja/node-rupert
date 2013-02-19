@@ -1,11 +1,13 @@
 var createController = require('./lib/controller');
 
 module.exports = function (taskImplementations, planNames, callback) {
-  throwIfMissingTasks();
+  function main() {
+    throwIfMissingTasks();
 
-  var c = createController(taskImplementations, planNames, callback || function () {});
-  c.start();
-  return c.emitter;
+    var c = createController(taskImplementations, planNames, callback || function () {});
+    c.start();
+    return c.emitter;
+  }
 
   function throwIfMissingTasks() {
     var alltaskNames = getAllNamedTasks();
@@ -24,5 +26,7 @@ module.exports = function (taskImplementations, planNames, callback) {
     });
     return alltaskNames;
   }
+
+  return main();
 };
 
