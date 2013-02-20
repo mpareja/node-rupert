@@ -18,12 +18,29 @@ describe('error handling', function () {
     testErrorReported(tasks, done);
   });
 
+  it('on multiple exceptions, aggregate errors into one error object', function (done) {
+    var error1 = new Error('error1');
+    var error2 = new Error('error2');
+    var tasks = {
+      failtask: function (cb) { throw error1; },
+      failtask2: function (cb) { throw error2; }
+    };
+    var r = rupert(tasks, { failtask: [], failtask2: [] }, function (err) {
+      expect(err).not.null;
+      expect(err.message).equals('Task(s) failed - check innerErrors for details.');
+      expect(Object.keys(err.innerErrors).length).equals(2);
+      expect(err.innerErrors.failtask).equals(error1);
+      expect(err.innerErrors.failtask2).equals(error2);
+      done();
+    });
+  });
+
   function testErrorReported(tasks, done) {
     var callbackCalled = false;
     var errorCalled = false; // ensures error raised before completion callback
     var r = rupert(tasks, {'task': ['failtask']}, function (err) {
       expect(err).not.null;
-      expect(err.message).equals('bogus');
+      expect(err.message).equals('Task(s) failed - check innerErrors for details.');
       expect(callbackCalled).is.false;
       expect(errorCalled).is.true;
       callbackCalled = true;
