@@ -39,7 +39,7 @@ task('lint_tests', function () {
       '--devel',
       '--node',
       '--vars',
-      '--maxerr=100',
+      '--maxerr=200',
       '--indent=2',
       '--sloppy=true', // don't require "use strict" everywhere
       '--nomen=true', // don't give warnings for __dirname
