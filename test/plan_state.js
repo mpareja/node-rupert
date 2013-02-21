@@ -41,6 +41,18 @@ describe('PlanState', function () {
     expect(r.allDone()).is.true;
   });
 
+  it('knows not to execute subsequent tasks after a failure', function () {
+    var ps = new PlanState({'first': [], 'second': ['first']});
+    ps.start('first');
+    ps.fail('first');
+    expect(ps.next()).is.null;
+    expect(ps.allDone()).is.true;
+  });
+
+  // The following tests prevent notifying PlanState of start, completion and failure
+  // out of order. This may catch bugs while in development, but I fear enforcing this
+  // may hamper our ability to add functionality in the future.
+
   it('prevents completing task before it is started', function () {
     var r = new PlanState({'first': []});
     expect(function () {
