@@ -2,6 +2,8 @@
 
 Hand Rupert a set of tasks including how they depend on each other and he'll take care of parallelizing them where possible. Rupert will stream task output to the console for your immediate viewing pleasure. He'll also stream each task's output to a separate log file so you can view it in isolation.
 
+[![Dependency Status](http://david-dm.org/jhnns/rewire/status.png)](http://david-dm.org/jhnns/rewire)
+
 ## Usage
 
 Rupert needs to know how to perform each task, how tasks are related and what tasks to execute. Rupert's a friendly guy, so he accepts tasks in a couple ways. You can give him a set of tasks to be performed together with their dependencies and a function for performing the work, or you can split up the definations for how to perform the tasks from the list of tasks to perform and how they're related.
