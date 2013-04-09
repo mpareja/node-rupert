@@ -42,7 +42,6 @@ describe('error handling', function () {
       done();
     });
   });
-  return;
 
   it('on task failure, pass error to completion callback and emit error event', function (done) {
     var tasks = {
