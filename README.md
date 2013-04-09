@@ -2,7 +2,7 @@
 
 Hand Rupert a set of tasks including how they depend on each other and he'll take care of parallelizing them where possible. Rupert will stream task output to the console for your immediate viewing pleasure. He'll also stream each task's output to a separate log file so you can view it in isolation.
 
-[![Dependency Status](https://david-dm.org/mpareja/node-rupert/status.png)](https://david-dm.org/mpareja/node-rupert)
+[![Build Status](https://travis-ci.org/mpareja/node-rupert.png)](https://travis-ci.org/mpareja/node-rupert) [![Dependency Status](https://david-dm.org/mpareja/node-rupert/status.png)](https://david-dm.org/mpareja/node-rupert)
 
 ## Usage
 
