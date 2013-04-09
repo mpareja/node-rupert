@@ -2,6 +2,48 @@ var rupert = require('../');
 var expect = require('chai').expect;
 
 describe('error handling', function () {
+  it('on task failure, other executing tasks can still complete', function (done) {
+    // Once failtask detects that passtask has started, it errors and sets up
+    // completion of pass task. The expectation is that passtask will complete
+    // rather than hang or process crash.
+    var passStarted = false;
+    var passDone = false;
+    var failStarted = false;
+    var failDone = false;
+    var tasks = {
+      failtask: function (cb) {
+        failStarted = true;
+        if (passStarted) {
+          failDone = true;
+          cb(new Error('failtask'));
+        } else {
+          // wait for passtask to start
+          setTimeout(tasks.failtask, 1);
+        }
+      },
+      passtask: function (cb) {
+        passStarted = true;
+        setTimeout(function () {
+          passDone = true;
+          cb(null);
+        }, 100);
+      }
+    };
+
+    rupert(tasks, { passtask: [], failtask: [] }, function (err) {
+      expect(failStarted);
+      expect(passStarted);
+      expect(failDone);
+      expect(passDone);
+
+      expect(err).is.not.null;
+      expect(err.innerErrors.failtask).is.not.null;
+      expect(err.innerErrors.failtask.message).equals('failtask');
+      done();
+    });
+  });
+  return;
+
   it('on task failure, pass error to completion callback and emit error event', function (done) {
     var tasks = {
       task: function (cb) { cb(null); },
