@@ -49,6 +49,16 @@ describe('PlanState', function () {
     expect(ps.allDone()).is.true;
   });
 
+  it('knows to wait for all running tasks to fail or complete before claiming all done', function () {
+    var ps = new PlanState({'first': [], 'second' : []});
+    ps.start('first');
+    ps.start('second');
+    ps.fail('first');
+    expect(ps.allDone()).is.false;
+    ps.complete('second');
+    expect(ps.allDone()).is.true;
+  });
+
   // The following tests prevent notifying PlanState of start, completion and failure
   // out of order. This may catch bugs while in development, but I fear enforcing this
   // may hamper our ability to add functionality in the future.
