@@ -3,9 +3,9 @@ var expect = require('chai').expect;
 
 describe('error handling', function () {
   it('on task failure, other executing tasks can still complete', function (done) {
-    // Once failtask detects that passtask has started, it errors and sets up
-    // completion of pass task. The expectation is that passtask will complete
-    // rather than hang or process crash.
+    // Once failtask detects that passtask has started, it errors
+    // The expectation is that passtask will complete rather than
+    // hang or process crash.
     var passStarted = false;
     var passDone = false;
     var failStarted = false;
