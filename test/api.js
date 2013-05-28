@@ -41,6 +41,57 @@ describe('rupert', function () {
     });
   });
 
+  he('raises taskStart when starting tasks', function (done) {
+    var started = [];
+    var tasks = {
+      root: function (cb) { cb(null); },
+      leaf: function (cb) { cb(null); }
+    };
+    var r = rupert(tasks, { root: ['leaf'] }, function (err) {
+      if (err) { throw err; }
+      expect(started.shift()).equals('leaf');
+      expect(started.shift()).equals('root');
+      done();
+    });
+    r.on('taskStart', function (task) {
+      started.push(task);
+    });
+  });
+
+  he('raises taskComplete when task completes successfully', function (done) {
+    var completed = [];
+    var tasks = {
+      root: function (cb) { cb(null); },
+      leaf: function (cb) { cb(null); }
+    };
+    var r = rupert(tasks, { root: ['leaf'] }, function (err) {
+      if (err) { throw err; }
+      expect(completed.shift()).equals('leaf');
+      expect(completed.shift()).equals('root');
+      done();
+    });
+    r.on('taskComplete', function (task) {
+      completed.push(task);
+    });
+  });
+
+  he('does not raise taskComplete on task failure', function (done) {
+    var completed = [];
+    var tasks = {
+      root: function (cb) { cb(new Error()); },
+      leaf: function (cb) { cb(null); }
+    };
+    var r = rupert(tasks, { root: ['leaf'] }, function (err) {
+      expect(err).is.not.null;
+      expect(completed.shift()).equals('leaf');
+      expect(completed.shift()).is.undefined;
+      done();
+    });
+    r.on('taskComplete', function (task) {
+      completed.push(task);
+    });
+  });
+
   he('error on missing task', function () {
     expect(function () {
       rupert({}, { task1: [], task2: [] });
