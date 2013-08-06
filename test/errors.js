@@ -78,21 +78,25 @@ describe('error handling', function () {
 
   function testErrorReported(tasks, done) {
     var callbackCalled = false;
-    var errorCalled = false; // ensures error raised before completion callback
+    var failCalled = false; // ensures fail raised before completion callback
     var r = rupert(tasks, {'task': ['failtask']}, function (err) {
       expect(err).not.null;
       expect(err.message).equals('Task(s) failed - check innerErrors for details.');
       expect(callbackCalled).is.false;
-      expect(errorCalled).is.true;
+      expect(failCalled).is.true;
       callbackCalled = true;
       done();
     });
-    r.on('error', function (err) {
+    r.on('taskComplete', function () {
+      expect('taskComplete should not have been called.').is.false;
+    });
+    r.on('taskFail', function (err) {
       expect(err).not.null;
       expect(err.message).equals('bogus');
+      expect(err.task).equals('failtask');
       expect(callbackCalled).is.false;
-      expect(errorCalled).is.false;
-      errorCalled = true;
+      expect(failCalled).is.false;
+      failCalled = true;
     });
   }
 });

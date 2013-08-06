@@ -123,8 +123,5 @@ describe('rupert', function () {
       expect(tickHappened).is.true;
       done();
     });
-    r.on('error', function () {
-      expect(tickHappened).is.true;
-    });
   });
 });
