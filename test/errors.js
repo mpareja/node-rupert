@@ -76,6 +76,23 @@ describe('error handling', function () {
     });
   });
 
+  it('on multiple exceptions, raise taskFail for each', function (done) {
+    var raised = [];
+    var error1 = new Error('error1');
+    var error2 = new Error('error2');
+    var tasks = {
+      failtask: function (cb) { throw error1; },
+      failtask2: function (cb) { throw error2; }
+    };
+    var r = rupert(tasks, { failtask: [], failtask2: [] }, function (err) {
+      expect(raised.length).equals(2);
+      done();
+    });
+    r.on('taskFail', function (err) {
+      raised.push(err);
+    });
+  });
+
   function testErrorReported(tasks, done) {
     var callbackCalled = false;
     var failCalled = false; // ensures fail raised before completion callback
