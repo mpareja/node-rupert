@@ -88,8 +88,8 @@ describe('error handling', function () {
       expect(raised.length).equals(2);
       done();
     });
-    r.on('taskFail', function (err) {
-      raised.push(err);
+    r.on('taskFail', function (task, err) {
+      raised.push(task);
     });
   });
 
@@ -107,10 +107,10 @@ describe('error handling', function () {
     r.on('taskComplete', function () {
       expect('taskComplete should not have been called.').is.false;
     });
-    r.on('taskFail', function (err) {
+    r.on('taskFail', function (task, err) {
       expect(err).not.null;
       expect(err.message).equals('bogus');
-      expect(err.task).equals('failtask');
+      expect(task).equals('failtask');
       expect(callbackCalled).is.false;
       expect(failCalled).is.false;
       failCalled = true;
