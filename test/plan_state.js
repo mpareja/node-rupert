@@ -59,6 +59,18 @@ describe('PlanState', function () {
     expect(ps.allDone()).is.true;
   });
 
+  it('supports retrying a task and continuing plan', function () {
+    var ps = new PlanState({'first': [], 'second': ['first']});
+    ps.start('first');
+    ps.fail('first');
+    ps.retry('first');
+    expect(ps.next()).is.null;
+    expect(ps.allDone()).is.false;
+    ps.complete('first');
+    expect(ps.next()).equals('second');
+    expect(ps.allDone()).is.false;
+  });
+
   // The following tests prevent notifying PlanState of start, completion and failure
   // out of order. This may catch bugs while in development, but I fear enforcing this
   // may hamper our ability to add functionality in the future.
